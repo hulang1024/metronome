@@ -35,7 +35,7 @@ window.addEventListener('load', function() {
     function startAnimation() {
       timer = requestAnimationFrame(function() {
         if (Math.round(audio.currentTime * 1000) >= offset) {
-          currBeatIndex = Math.round((audio.currentTime * 1000 - offset) / beatDuration) % beats;
+          currBeatIndex = Math.floor((audio.currentTime * 1000 - offset) / beatDuration) % beats;
           beatDivs[prevBeatIndex].style.backgroundColor = '';
           beatDivs[currBeatIndex].style.backgroundColor = 'blue';
           prevBeatIndex = currBeatIndex;
