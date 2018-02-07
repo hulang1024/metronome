@@ -1,29 +1,39 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <title>节拍器</title>
-  </head>
-  
-  <body>
-    <div id="main" class="panel">
-      <div id="beatShowPanel" class="panel">
-        
-      </div>
-      
-      <div id="memterPanel" class="panel">
-        拍号 = <select id="memterSelect"></select>
-      </div>
-      
-      <div id="bpmPanel" class="panel">
-      (四分音符)BPM = <input id="bpm" type="number" min="30" />
-      </div>
-      
-      <div class="panel">
-        <button id="play"></button>
-      </div>
-    </div>
-    <script src="main.js"></script>
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <title>节拍器</title>
+    </head>
+
+    <body>
+        <div id="main" class="panel">
+            <div id="beatShowPanel" class="panel">
+
+            </div>
+
+            <div class="panel">
+                划分拍子<input id="beatSnapDivisorRange" type="range" min="1" max="16" value="1"><span id="beatSnapDivisorText"></span>
+            </div>
+
+            <div id="memterPanel" class="panel">
+                拍号 = <select id="memterSelect"></select>
+            </div>
+
+            <div id="timingPanel" class="panel">
+                Offset = <input id="offset" type="number" min="0" />
+                <br>
+                BPM = <input id="bpm" type="number" min="30" />
+            </div>
+
+            <div class="panel">
+                <audio controls></audio>
+                <br>
+                音频地址: <input id="audioUrl" type="url" />
+                <button id="loadAudio">加载歌曲</button>
+            </div>
+        </div>
+
+        <script src="main.js"></script>
+    </body>
 </html>

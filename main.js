@@ -1,123 +1,135 @@
-﻿
-
 window.addEventListener('load', function() {
+  var audio = document.getElementsByTagName('audio')[0];
+  var loadAudioButton = document.getElementById('loadAudio');
+  var audioUrlInput = document.getElementById('audioUrl');
+  loadAudioButton.onclick = function() {
+    audio.src = audioUrlInput.value;
+  };
+
+  audio.addEventListener('play', function() {
+    play();
+  });
+
+  audio.addEventListener('ended', stop);
+
+  var offset = 0;
   var bpm = 60;
   var memterBeats = 4; // 节拍拍子数
-  var memterValue = 4; // 拍子音符时值
+  //var memterValue = 4; // 拍子时值
+  var beatSnapDivisor = 1;
   var timer;
   var isPlaying = false;
-  
-  function setBPM(b) {
-    bpm = b;
-  }
-  
-  function getBPM() { return bpm }
-  
-  function setMemter(beats, value) {
-    memterBeats = beats;
-    memterValue = value;
-  }
-  
-  function getMemter() { return {beats: memterBeats, value: memterValue} }
-  
+
   function playOrStop() {
     isPlaying ? stop() : play();
   }
-  
+
   function play() {
-    resetBeats();
     var beatDivs = document.getElementById('beatShowPanel').children;
-    var beatDuration = 60 * 1000 / bpm / (memterValue / 4);
-    var curBeatIndex = memterBeats - 1;
-    var lastTime = new Date();
-    timer = setInterval(function(){
-      if (new Date() - lastTime >= beatDuration) {
-        beatDivs[curBeatIndex % memterBeats].style.backgroundColor = '';
-        curBeatIndex = ++curBeatIndex % memterBeats;
-        beatDivs[curBeatIndex].style.backgroundColor = 'blue';
-        lastTime = new Date();
-      }
-    }, 1);
+    var beatDuration = 60 * 1000 / bpm / beatSnapDivisor;
+    var currBeatIndex = 0, prevBeatIndex = 0;
+    var beats = memterBeats * beatSnapDivisor;
+
+    startAnimation();
+
+    function startAnimation() {
+      timer = requestAnimationFrame(function() {
+        if (Math.round(audio.currentTime * 1000) >= offset) {
+          currBeatIndex = Math.round((audio.currentTime * 1000 - offset) / beatDuration) % beats;
+          beatDivs[prevBeatIndex].style.backgroundColor = '';
+          beatDivs[currBeatIndex].style.backgroundColor = 'blue';
+          prevBeatIndex = currBeatIndex;
+        }
+        timer = requestAnimationFrame(arguments.callee);
+      });
+    }
+
     isPlaying = true;
   }
-  
+
   function stop() {
-    clearInterval(timer);
+    cancelAnimationFrame(timer);
     isPlaying = false;
   }
-  
-  initBeatShowPanel();
-  initBPMPanel();
-  initMemterPanel();
 
-  var playButton = document.getElementById('play');
-  playButton.innerHTML = '开始';
-  playButton.onclick = function() {
-    playOrStop();
-    playButton.innerHTML = !isPlaying ? '开始' : '停止';
-  };
+  var beatSnapDivisorRange = document.getElementById('beatSnapDivisorRange');
+  var beatSnapDivisorRangeOnChange;
+  beatSnapDivisorRange.addEventListener('change', beatSnapDivisorRangeOnChange = function() {
+    beatSnapDivisor = +this.value;
+    document.getElementById('beatSnapDivisorText').innerHTML = '1/' + beatSnapDivisor;
+    var continePlay = isPlaying;
+    stop();
+    resetBeats();
+    if (continePlay) {
+      play();
+    }
+  });
+  beatSnapDivisorRangeOnChange.call({value: beatSnapDivisor});
+
+  initBeatShowPanel();
+  initTimingPanel();
+  initMemterPanel();
 
   function initBeatShowPanel() {
     resetBeats();
   }
 
-  function initBPMPanel() {
+  function initTimingPanel() {
     var input = document.getElementById('bpm');
-    input.value = getBPM();
+    input.value = bpm;
     input.addEventListener('change', function() {
-      var b = isPlaying;
+      var continePlay = isPlaying;
       stop();
-      setBPM(this.value);
-      if (b) {
+      bpm = +this.value;
+      if (continePlay) {
         play();
       }
+    });
+
+    document.getElementById('offset').addEventListener('change', function() {
+      offset = +this.value;
     });
   }
 
   function initMemterPanel() {
     var memterSelect = document.getElementById('memterSelect');
-    
-    var memters = [
-      '1/4', '2/4', '3/4', '4/4',
-      '5/4', '3/8', '6/8', '9/8',
-      '12/8', '2/2', '3/2', '4/2'
-    ];
-    
-    memters.forEach(function(memter) {
+
+    for (var beats = 1; beats <= 16; beats++) {
+      var memter = beats + '/' + 4;
       var opt = new Option();
       opt.text = memter;
-      opt.value = memter;
+      opt.value = beats;
       memterSelect.options.add(opt);
-    });
-    
+    }
+
     memterSelect.addEventListener('change', function() {
-      var memter = this.value;
-      var m = memter.split('/');
-      setMemter(+m[0], +m[1]);
+      var continePlay = isPlaying;
+      stop();
+      memterBeats = +this.value;
       resetBeats();
+      if (continePlay) {
+        play();
+      }
     });
-    
-    var m = getMemter();
-    memterSelect.value = m.beats + '/' + m.value;
+
+    memterSelect.value = memterBeats;
   }
-  
+
   function resetBeats() {
-    var beats = getMemter().beats;
-    
     var div = document.getElementById('beatShowPanel');
     div.innerHTML = '';
-    var collWidth = div.scrollWidth;
-    var beatDivWidth = 50;
-    var gap = 6;
-    var centerLeft = (collWidth - beats * (beatDivWidth + gap) - gap) / 2;
+    var beatDivSize = div.scrollHeight / beatSnapDivisor;
+    var gap = 10;
+    var beats = memterBeats * beatSnapDivisor;
+    var centerLeft = (div.scrollWidth - beats * (beatDivSize + gap) - gap) / 2;
     for (var n = 0; n < beats; n++) {
       var beatDiv = document.createElement('div');
       beatDiv.style.position = 'absolute';
-      beatDiv.style.left = centerLeft + (n * (beatDivWidth + gap)) + 'px';
-      beatDiv.style.width = beatDivWidth + 'px';
-      beatDiv.style.height = beatDivWidth + 'px';
+      beatDiv.style.left = centerLeft + (n * (beatDivSize + gap)) + 'px';
+      beatDiv.style.width = beatDivSize + 'px';
+      beatDiv.style.height = beatDivSize + 'px';
       beatDiv.style.border = '1px solid black';
-      beatDiv.style.borderRadius = beatDivWidth + 'px';
+      beatDiv.style.borderRadius = beatDivSize + 'px';
       div.appendChild(beatDiv);
     }
   }
