@@ -4,7 +4,7 @@ window.addEventListener('load', function() {
   var loadAudioButton = document.getElementById('loadAudio');
   var audioUrlInput = document.getElementById('audioUrl');
   var beatShowPanel = document.getElementById('beatShowPanel');
-
+  var circle = document.getElementById('memterPanel').children[0];
   loadAudioButton.onclick = function() {
     audio.src = audioUrlInput.value;
   };
@@ -12,10 +12,10 @@ window.addEventListener('load', function() {
   audio.addEventListener('play', function() {
     play();
   });
-  
+
   audio.addEventListener('pause', stop);
   audio.addEventListener('ended', stop);
-  
+
   var offset = 0;
   var bpm = 60;
   var memterBeats = 4; // 节拍拍子数
@@ -23,10 +23,10 @@ window.addEventListener('load', function() {
   var beatSnapDivisor = 1;
   var timer;
   var isPlaying = false;
-  
-  
+
+
   parseUrl();
-  
+
   function playOrStop() {
     isPlaying ? stop() : play();
   }
@@ -38,26 +38,27 @@ window.addEventListener('load', function() {
     var beatDuration = 60 * 1000 / bpm / beatSnapDivisor;
     var currBeatIndex = 0, prevBeatIndex = 0, beatCount = -1;
     var beats = memterBeats * beatSnapDivisor;
-        
+
     cancelAnimationFrame(timer);
     startAnimation();
 
     function startAnimation() {
       timer = requestAnimationFrame(function() {
         if (Math.round(audio.currentTime * 1000) >= offset) {
-          
+
           var count = Math.floor((audio.currentTime * 1000 - offset) / beatDuration);
           if (count != beatCount) {
             beatCount = count;
             currBeatIndex = beatCount % beats;
+            circle.style.backgroundColor = ['SkyBlue','DodgerBlue'][count%2];
             beatDivs[prevBeatIndex].style.backgroundColor = 'SkyBlue';
             beatDivs[currBeatIndex].style.backgroundColor = 'DodgerBlue';
             prevBeatIndex = currBeatIndex;
           }
         }
-        
+
         currentTimeElem.innerHTML = Math.round(audio.currentTime * 1000);
-        
+
         timer = requestAnimationFrame(arguments.callee);
       });
     }
@@ -85,11 +86,11 @@ window.addEventListener('load', function() {
   beatSnapDivisorRange.value = beatSnapDivisor;
   beatSnapDivisorRangeOnChange.call({value: beatSnapDivisor});
 
-  
+
   document.getElementById('setCurrentTime').onclick = function() {
     document.getElementById('offset').value = Math.round(audio.currentTime * 1000);
   };
-  
+
   document.getElementById('playbackRateRange').onchange = function(){
     audio.playbackRate = this.value / 100;
     document.getElementById('playbackRateText').innerHTML = (this.value + '%');
@@ -100,7 +101,7 @@ window.addEventListener('load', function() {
     audio.currentTime = audio.currentTime + Math.sign(-event.deltaY) * (duration / 1000);
     currentTimeElem.innerHTML = Math.round(audio.currentTime * 1000);
   });
-  
+
   initBeatShowPanel();
   initTimingPanel();
   initMemterPanel();
@@ -172,7 +173,7 @@ window.addEventListener('load', function() {
       beatShowPanel.appendChild(beatDiv);
     }
   }
-  
+
   function parseUrl() {
     if (!location.search) {
       return;
