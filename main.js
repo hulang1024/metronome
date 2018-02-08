@@ -87,7 +87,9 @@ window.addEventListener('load', function() {
     var duration = (60 * 1000 / bpm / beatSnapDivisor / (beatSnapDivisor * 4));
     audio.currentTime = audio.currentTime + Math.sign(-event.deltaY) * (duration / 1000);
   });
-      
+  
+  parseUrl();
+  
   initBeatShowPanel();
   initTimingPanel();
   initMemterPanel();
@@ -108,7 +110,9 @@ window.addEventListener('load', function() {
       }
     });
 
-    document.getElementById('offset').addEventListener('change', function() {
+    var offsetInput = document.getElementById('offset');
+    offsetInput.value = offset;
+    offsetInput.addEventListener('change', function() {
       offset = +this.value;
     });
   }
@@ -153,6 +157,34 @@ window.addEventListener('load', function() {
       beatDiv.style.border = '1px solid black';
       beatDiv.style.borderRadius = beatDivSize + 'px';
       div.appendChild(beatDiv);
+    }
+  }
+  
+  function parseUrl() {
+    if (!location.search) {
+      return;
+    }
+    var eqs = location.search.substr(1).split('&');
+    for (var i in eqs) {
+      var kvp = eqs[i].split('=');
+      var value = kvp[1];
+      switch (kvp[0].toLowerCase()) {
+      case "beatsnapdivisor":
+        beatSnapDivisor = +value;
+        break;
+      case "memter":
+        memter = +value;
+        break;
+      case "offset":
+        offset = +value;
+        break;
+      case "bpm":
+        bpm = +value;
+        break;
+      case "url":
+        audio.src = decodeURI(value);
+        break;
+      }
     }
   }
 });
