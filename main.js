@@ -156,10 +156,12 @@ window.addEventListener('load', function() {
     var gap = 20;
     var beats = memterBeats * beatSnapDivisor;
     var centerLeft = (beatShowPanel.scrollWidth - beats * (beatDivSize + gap)) / 2;
+    var centerTop = (beatShowPanel.scrollHeight - beatDivSize) / 2;
     for (var n = 0; n < beats; n++) {
       var beatDiv = document.createElement('beatShowPanel');
       beatDiv.style.position = 'absolute';
       beatDiv.style.left = centerLeft + (n * (beatDivSize + gap)) + 'px';
+      beatDiv.style.top = centerTop + 'px';
       beatDiv.style.width = beatDivSize + 'px';
       beatDiv.style.height = beatDivSize + 'px';
       beatDiv.style.border = '1px solid SkyBlue';
