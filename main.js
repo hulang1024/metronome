@@ -158,7 +158,7 @@ window.addEventListener('load', function() {
     var beatDivSize = beatShowPanel.scrollHeight / beatSnapDivisor;
     var gap = 20;
     var beats = memterBeats * beatSnapDivisor;
-    var centerLeft = (beatShowPanel.scrollWidth - beats * (beatDivSize + gap)) / 2;
+    var centerLeft = (beatShowPanel.scrollWidth - beats * (beatDivSize + gap) + gap) / 2;
     var centerTop = (beatShowPanel.scrollHeight - beatDivSize) / 2;
     for (var n = 0; n < beats; n++) {
       var beatDiv = document.createElement('beatShowPanel');
