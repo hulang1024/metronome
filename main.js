@@ -82,6 +82,7 @@ window.addEventListener('load', function() {
       play();
     }
   });
+  beatSnapDivisorRange.value = beatSnapDivisor;
   beatSnapDivisorRangeOnChange.call({value: beatSnapDivisor});
 
   
@@ -90,14 +91,14 @@ window.addEventListener('load', function() {
   };
   
   document.getElementById('playbackRateRange').onchange = function(){
-    document.getElementById('playbackRateText').innerHTML = (this.value + '%');
-
     audio.playbackRate = this.value / 100;
+    document.getElementById('playbackRateText').innerHTML = (this.value + '%');
   };
 
   document.addEventListener('mousewheel', function(event) {
     var duration = (60 * 1000 / bpm / beatSnapDivisor / (beatSnapDivisor * 4));
     audio.currentTime = audio.currentTime + Math.sign(-event.deltaY) * (duration / 1000);
+    currentTimeElem.innerHTML = Math.round(audio.currentTime * 1000);
   });
   
   initBeatShowPanel();
