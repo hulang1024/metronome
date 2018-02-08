@@ -188,7 +188,8 @@ window.addEventListener('load', function() {
         bpm = +value;
         break;
       case "url":
-        audio.src = decodeURI(value);
+        audioUrlInput.value = decodeURI(value);
+        loadAudioButton.click();
         break;
       }
     }
