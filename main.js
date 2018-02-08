@@ -50,7 +50,7 @@ window.addEventListener('load', function() {
           if (count != beatCount) {
             beatCount = count;
             currBeatIndex = beatCount % beats;
-            circle.style.backgroundColor = ['SkyBlue','DodgerBlue'][count%2];
+            circle.style.backgroundColor = count % 2 ? 'SkyBlue' : 'DodgerBlue';
             beatDivs[prevBeatIndex].style.backgroundColor = 'SkyBlue';
             beatDivs[currBeatIndex].style.backgroundColor = 'DodgerBlue';
             prevBeatIndex = currBeatIndex;
