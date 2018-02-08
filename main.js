@@ -185,8 +185,8 @@ window.addEventListener('load', function() {
       case "beatsnapdivisor":
         beatSnapDivisor = +value;
         break;
-      case "memter":
-        memter = +value;
+      case "memterbeats":
+        memterBeats = +value;
         break;
       case "offset":
         offset = +value;
