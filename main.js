@@ -24,6 +24,9 @@ window.addEventListener('load', function() {
   var timer;
   var isPlaying = false;
   
+  
+  parseUrl();
+  
   function playOrStop() {
     isPlaying ? stop() : play();
   }
@@ -96,8 +99,6 @@ window.addEventListener('load', function() {
     var duration = (60 * 1000 / bpm / beatSnapDivisor / (beatSnapDivisor * 4));
     audio.currentTime = audio.currentTime + Math.sign(-event.deltaY) * (duration / 1000);
   });
-
-  parseUrl();
   
   initBeatShowPanel();
   initTimingPanel();
