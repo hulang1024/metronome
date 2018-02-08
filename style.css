@@ -11,7 +11,7 @@
 
 #beatShowPanel {
   width: 100%;
-  height: 100px;
+  height: 90px;
   margin: 0 auto;
   margin-bottom: 40px;
 }
@@ -25,9 +25,9 @@
 }
 
 #bpm {
-  width: 50px;
+  width: 60px;
 }
 
 #offset {
-  width: 70px;
+  width: 80px;
 }

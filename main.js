@@ -1,4 +1,5 @@
 window.addEventListener('load', function() {
+  var currentTimeElem = document.getElementById('currentTime');
   var audio = document.getElementsByTagName('audio')[0];
   var loadAudioButton = document.getElementById('loadAudio');
   var audioUrlInput = document.getElementById('audioUrl');
@@ -25,11 +26,13 @@ window.addEventListener('load', function() {
   }
 
   function play() {
+    resetBeats();
     var beatDivs = document.getElementById('beatShowPanel').children;
     var beatDuration = 60 * 1000 / bpm / beatSnapDivisor;
     var currBeatIndex = 0, prevBeatIndex = 0;
     var beats = memterBeats * beatSnapDivisor;
 
+    cancelAnimationFrame(timer);
     startAnimation();
 
     function startAnimation() {
@@ -40,6 +43,9 @@ window.addEventListener('load', function() {
           beatDivs[currBeatIndex].style.backgroundColor = 'blue';
           prevBeatIndex = currBeatIndex;
         }
+        
+        currentTimeElem.innerHTML = Math.round(audio.currentTime * 1000);
+        
         timer = requestAnimationFrame(arguments.callee);
       });
     }
@@ -66,6 +72,22 @@ window.addEventListener('load', function() {
   });
   beatSnapDivisorRangeOnChange.call({value: beatSnapDivisor});
 
+  
+  document.getElementById('setCurrentTime').onclick = function() {
+    document.getElementById('offset').value = Math.round(audio.currentTime * 1000);
+  };
+  
+  document.getElementById('playbackRateRange').onchange = function(){
+    document.getElementById('playbackRateText').innerHTML = (this.value + '%');
+
+    audio.playbackRate = this.value / 100;
+  };
+
+  document.addEventListener('mousewheel', function(event) {
+    var duration = (60 * 1000 / bpm / beatSnapDivisor / (beatSnapDivisor * 4));
+    audio.currentTime = audio.currentTime + Math.sign(-event.deltaY) * (duration / 1000);
+  });
+      
   initBeatShowPanel();
   initTimingPanel();
   initMemterPanel();

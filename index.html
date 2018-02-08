@@ -22,15 +22,20 @@
 
             <div id="timingPanel" class="panel">
                 Offset = <input id="offset" type="number" min="0" />
+                <button id="setCurrentTime">当前时间</button>
                 <br>
                 BPM = <input id="bpm" type="number" min="30" />
             </div>
 
             <div class="panel">
-                <audio controls></audio>
+                <audio controls></audio><span id="currentTime">0</span>
+                <br>
+                <span>播放速度</span>
+                <input id="playbackRateRange" type="range" min="25" max="100" step="25" defaultValue="100" value="100"/>
+                <span id="playbackRateText">100%</span>
                 <br>
                 音频地址: <input id="audioUrl" type="url" />
-                <button id="loadAudio">加载歌曲</button>
+                <button id="loadAudio">加载</button>
             </div>
         </div>
 
