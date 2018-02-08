@@ -3,6 +3,8 @@ window.addEventListener('load', function() {
   var audio = document.getElementsByTagName('audio')[0];
   var loadAudioButton = document.getElementById('loadAudio');
   var audioUrlInput = document.getElementById('audioUrl');
+  var beatShowPanel = document.getElementById('beatShowPanel');
+
   loadAudioButton.onclick = function() {
     audio.src = audioUrlInput.value;
   };
@@ -20,7 +22,7 @@ window.addEventListener('load', function() {
   var beatSnapDivisor = 1;
   var timer;
   var isPlaying = false;
-
+  
   function playOrStop() {
     isPlaying ? stop() : play();
   }
@@ -28,8 +30,9 @@ window.addEventListener('load', function() {
   function play() {
     resetBeats();
     var beatDivs = document.getElementById('beatShowPanel').children;
+
     var beatDuration = 60 * 1000 / bpm / beatSnapDivisor;
-    var currBeatIndex = 0, prevBeatIndex = 0;
+    var currBeatIndex = 0, prevBeatIndex = 0, beatCount = -1;
     var beats = memterBeats * beatSnapDivisor;
 
     cancelAnimationFrame(timer);
@@ -38,10 +41,14 @@ window.addEventListener('load', function() {
     function startAnimation() {
       timer = requestAnimationFrame(function() {
         if (Math.round(audio.currentTime * 1000) >= offset) {
-          currBeatIndex = Math.floor((audio.currentTime * 1000 - offset) / beatDuration) % beats;
-          beatDivs[prevBeatIndex].style.backgroundColor = '';
-          beatDivs[currBeatIndex].style.backgroundColor = 'blue';
-          prevBeatIndex = currBeatIndex;
+          var count = Math.floor((audio.currentTime * 1000 - offset) / beatDuration);
+          if (count != beatCount) {
+            beatCount = count;
+            currBeatIndex = beatCount % beats;
+            beatDivs[prevBeatIndex].style.backgroundColor = '';
+            beatDivs[currBeatIndex].style.backgroundColor = 'blue';
+            prevBeatIndex = currBeatIndex;
+          }
         }
         
         currentTimeElem.innerHTML = Math.round(audio.currentTime * 1000);
@@ -87,7 +94,7 @@ window.addEventListener('load', function() {
     var duration = (60 * 1000 / bpm / beatSnapDivisor / (beatSnapDivisor * 4));
     audio.currentTime = audio.currentTime + Math.sign(-event.deltaY) * (duration / 1000);
   });
-  
+
   parseUrl();
   
   initBeatShowPanel();
@@ -142,21 +149,20 @@ window.addEventListener('load', function() {
   }
 
   function resetBeats() {
-    var div = document.getElementById('beatShowPanel');
-    div.innerHTML = '';
-    var beatDivSize = div.scrollHeight / beatSnapDivisor;
-    var gap = 10;
+    beatShowPanel.innerHTML = '';
+    var beatDivSize = beatShowPanel.scrollHeight / beatSnapDivisor;
+    var gap = 20;
     var beats = memterBeats * beatSnapDivisor;
-    var centerLeft = (div.scrollWidth - beats * (beatDivSize + gap) - gap) / 2;
+    var centerLeft = (beatShowPanel.scrollWidth - beats * (beatDivSize + gap) - gap) / 2;
     for (var n = 0; n < beats; n++) {
-      var beatDiv = document.createElement('div');
+      var beatDiv = document.createElement('beatShowPanel');
       beatDiv.style.position = 'absolute';
       beatDiv.style.left = centerLeft + (n * (beatDivSize + gap)) + 'px';
       beatDiv.style.width = beatDivSize + 'px';
       beatDiv.style.height = beatDivSize + 'px';
       beatDiv.style.border = '1px solid black';
       beatDiv.style.borderRadius = beatDivSize + 'px';
-      div.appendChild(beatDiv);
+      beatShowPanel.appendChild(beatDiv);
     }
   }
   
