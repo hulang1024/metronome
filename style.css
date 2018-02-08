@@ -6,7 +6,7 @@
 }
 
 #main {
-  margin-top: 100px;
+  margin-top: 30px;
 }
 
 #beatShowPanel {
@@ -17,11 +17,11 @@
 }
 
 #memterPanel {
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 #timingPanel {
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 #bpm {
@@ -30,4 +30,14 @@
 
 #offset {
   width: 80px;
+}
+
+.circle {
+  width: 130px;
+  height: 130px;
+  line-height: 130px;
+  border: 1px solid gray;
+  border-radius: 130px;
+  text-align: center;
+  margin: 0 auto;
 }

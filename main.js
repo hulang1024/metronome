@@ -12,9 +12,10 @@ window.addEventListener('load', function() {
   audio.addEventListener('play', function() {
     play();
   });
-
+  
+  audio.addEventListener('pause', stop);
   audio.addEventListener('ended', stop);
-
+  
   var offset = 0;
   var bpm = 60;
   var memterBeats = 4; // 节拍拍子数
@@ -34,19 +35,20 @@ window.addEventListener('load', function() {
     var beatDuration = 60 * 1000 / bpm / beatSnapDivisor;
     var currBeatIndex = 0, prevBeatIndex = 0, beatCount = -1;
     var beats = memterBeats * beatSnapDivisor;
-
+        
     cancelAnimationFrame(timer);
     startAnimation();
 
     function startAnimation() {
       timer = requestAnimationFrame(function() {
         if (Math.round(audio.currentTime * 1000) >= offset) {
+          
           var count = Math.floor((audio.currentTime * 1000 - offset) / beatDuration);
           if (count != beatCount) {
             beatCount = count;
             currBeatIndex = beatCount % beats;
-            beatDivs[prevBeatIndex].style.backgroundColor = '';
-            beatDivs[currBeatIndex].style.backgroundColor = 'blue';
+            beatDivs[prevBeatIndex].style.backgroundColor = 'SkyBlue';
+            beatDivs[currBeatIndex].style.backgroundColor = 'DodgerBlue';
             prevBeatIndex = currBeatIndex;
           }
         }
@@ -153,15 +155,16 @@ window.addEventListener('load', function() {
     var beatDivSize = beatShowPanel.scrollHeight / beatSnapDivisor;
     var gap = 20;
     var beats = memterBeats * beatSnapDivisor;
-    var centerLeft = (beatShowPanel.scrollWidth - beats * (beatDivSize + gap) - gap) / 2;
+    var centerLeft = (beatShowPanel.scrollWidth - beats * (beatDivSize + gap)) / 2;
     for (var n = 0; n < beats; n++) {
       var beatDiv = document.createElement('beatShowPanel');
       beatDiv.style.position = 'absolute';
       beatDiv.style.left = centerLeft + (n * (beatDivSize + gap)) + 'px';
       beatDiv.style.width = beatDivSize + 'px';
       beatDiv.style.height = beatDivSize + 'px';
-      beatDiv.style.border = '1px solid black';
+      beatDiv.style.border = '1px solid SkyBlue';
       beatDiv.style.borderRadius = beatDivSize + 'px';
+      beatDiv.style.backgroundColor = 'SkyBlue';
       beatShowPanel.appendChild(beatDiv);
     }
   }
@@ -194,4 +197,5 @@ window.addEventListener('load', function() {
       }
     }
   }
+
 });
