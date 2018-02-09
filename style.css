@@ -1,4 +1,6 @@
-﻿.panel {
+* { margin: 0; }
+
+.panel {
   position: relative;
   width: 800px;
   margin: 0 auto;
@@ -6,7 +8,7 @@
 }
 
 #main {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 #beatShowPanel {
@@ -16,12 +18,16 @@
   margin-bottom: 20px;
 }
 
+#beatSnapPanel {
+  margin-bottom: 20px;
+}
+
 #memterPanel {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 #timingPanel {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 #bpm {

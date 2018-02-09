@@ -4,7 +4,7 @@ window.addEventListener('load', function() {
   var loadAudioButton = document.getElementById('loadAudio');
   var audioUrlInput = document.getElementById('audioUrl');
   var beatShowPanel = document.getElementById('beatShowPanel');
-  var circle = document.getElementById('memterPanel').children[0];
+
   loadAudioButton.onclick = function() {
     audio.src = audioUrlInput.value;
   };
@@ -24,7 +24,6 @@ window.addEventListener('load', function() {
   var timer;
   var isPlaying = false;
 
-
   parseUrl();
 
   function playOrStop() {
@@ -33,27 +32,38 @@ window.addEventListener('load', function() {
 
   function play() {
     resetBeats();
-    var beatDivs = document.getElementById('beatShowPanel').children;
+    var beatDivs = Array.prototype.slice.call(document.getElementById('beatShowPanel').children, 0);
+    var circle = document.getElementById('memterPanel').children[0];
 
-    var beatDuration = 60 * 1000 / bpm / beatSnapDivisor;
-    var currBeatIndex = 0, prevBeatIndex = 0, beatCount = -1;
-    var beats = memterBeats * beatSnapDivisor;
+    var beatDuration = 60 * 1000 / bpm;
+    var currIndex = 0, prevIndex = 0;
+    var beatCount = -1, snapBeatCount;
+    var time, count;
 
     cancelAnimationFrame(timer);
     startAnimation();
 
     function startAnimation() {
       timer = requestAnimationFrame(function() {
-        if (Math.round(audio.currentTime * 1000) >= offset) {
+        time = audio.currentTime * 1000;
 
-          var count = Math.floor((audio.currentTime * 1000 - offset) / beatDuration);
+        if (Math.round(time) >= offset) {
+          count = Math.floor((time - offset) / (beatDuration / beatSnapDivisor));
+          if (count != snapBeatCount) {
+            snapBeatCount = count;
+            currIndex = snapBeatCount % (memterBeats * beatSnapDivisor);
+            beatDivs[prevIndex].style.backgroundColor = 'SkyBlue';
+            beatDivs[currIndex].style.backgroundColor = 'DodgerBlue';
+            prevIndex = currIndex;
+          }
+
+          count = Math.floor((time - offset) / beatDuration);
           if (count != beatCount) {
             beatCount = count;
-            currBeatIndex = beatCount % beats;
-            circle.style.backgroundColor = count % 2 ? 'SkyBlue' : 'DodgerBlue';
-            beatDivs[prevBeatIndex].style.backgroundColor = 'SkyBlue';
-            beatDivs[currBeatIndex].style.backgroundColor = 'DodgerBlue';
-            prevBeatIndex = currBeatIndex;
+            delay = time + beatDuration / 2;
+            circle.style.backgroundColor = 'DodgerBlue';
+          } else if (time >= delay) {
+            circle.style.backgroundColor = '';
           }
         }
 
@@ -132,7 +142,7 @@ window.addEventListener('load', function() {
   function initMemterPanel() {
     var memterSelect = document.getElementById('memterSelect');
 
-    for (var beats = 1; beats <= 16; beats++) {
+    for (var beats = 1; beats <= 8; beats++) {
       var memter = beats + '/' + 4;
       var opt = new Option();
       opt.text = memter;
@@ -155,22 +165,23 @@ window.addEventListener('load', function() {
 
   function resetBeats() {
     beatShowPanel.innerHTML = '';
-    var beatDivSize = beatShowPanel.scrollHeight / beatSnapDivisor;
-    var gap = 20;
+    var circleSize = beatShowPanel.scrollHeight / beatSnapDivisor;
+    var gap = circleSize;
     var beats = memterBeats * beatSnapDivisor;
-    var centerLeft = (beatShowPanel.scrollWidth - beats * (beatDivSize + gap) + gap) / 2;
-    var centerTop = (beatShowPanel.scrollHeight - beatDivSize) / 2;
+    var centerLeft = (beatShowPanel.scrollWidth - beats * (circleSize + gap) + gap) / 2;
+    var centerTop = (beatShowPanel.scrollHeight - circleSize) / 2;
+
     for (var n = 0; n < beats; n++) {
-      var beatDiv = document.createElement('beatShowPanel');
-      beatDiv.style.position = 'absolute';
-      beatDiv.style.left = centerLeft + (n * (beatDivSize + gap)) + 'px';
-      beatDiv.style.top = centerTop + 'px';
-      beatDiv.style.width = beatDivSize + 'px';
-      beatDiv.style.height = beatDivSize + 'px';
-      beatDiv.style.border = '1px solid SkyBlue';
-      beatDiv.style.borderRadius = beatDivSize + 'px';
-      beatDiv.style.backgroundColor = 'SkyBlue';
-      beatShowPanel.appendChild(beatDiv);
+      var div = document.createElement('beatShowPanel');
+      div.style.position = 'absolute';
+      div.style.left = centerLeft + (n * (circleSize + gap)) + 'px';
+      div.style.top = centerTop + 'px';
+      div.style.width = circleSize + 'px';
+      div.style.height = circleSize + 'px';
+      div.style.border = '1px solid SkyBlue';
+      div.style.borderRadius = circleSize + 'px';
+      div.style.backgroundColor = 'SkyBlue';
+      beatShowPanel.appendChild(div);
     }
   }
 
