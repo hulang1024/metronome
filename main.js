@@ -60,7 +60,7 @@ window.addEventListener('load', function() {
           count = Math.floor((time - offset) / beatDuration);
           if (count != beatCount) {
             beatCount = count;
-            delay = time + Math.floor(beatDuration / 8);
+            delay = time + 120;
             circle.style.backgroundColor = 'DodgerBlue';
           } else if (time >= delay) {
             circle.style.backgroundColor = '';
