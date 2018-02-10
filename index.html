@@ -9,27 +9,27 @@
     <body>
         <div id="main" class="panel">
             <div id="beatShowPanel" class="panel">
-
             </div>
-
+            <div id="beatCountPanel" class="panel">
+            第<span id="barCount">0</span>小节第<span id="beatCount">0</span>拍子
+            </div>
+            
             <div id="beatSnapPanel" class="panel">
                 划分拍子<input id="beatSnapDivisorRange" type="range" min="1" max="4" step="1"><span id="beatSnapDivisorText"></span>
             </div>
 
             <div id="memterPanel" class="panel">
-                <div class="circle">
-                拍号: <select id="memterSelect"></select>
-                </div>
+                每小节拍数: <select id="memterSelect"></select>
             </div>
 
             <div id="timingPanel" class="panel">
                 偏移音乐开头: <input id="offset" type="number" min="0" />毫秒
                 <button id="setCurrentTime">使用当前时间</button>
                 <br>
-                每分钟多少拍: <input id="bpm" type="number" min="30" />
+                每分钟拍数: <input id="bpm" type="number" min="30" />
             </div>
 
-            <div class="panel">
+            <div id="playerPanel" class="panel">
                 当前时间<div id="currentTime">0</div>
                 <span>播放速度</span>
                 <input id="playbackRateRange" type="range" min="25" max="100" step="25" defaultValue="100" value="100"/>
@@ -41,7 +41,11 @@
                 <button id="loadAudio">加载</button>
             </div>
         </div>
-
+        
+        <script
+          src="http://code.jquery.com/jquery-1.12.4.min.js"
+          integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+          crossorigin="anonymous"></script>
         <script src="main.js?v=1.1.3"></script>
     </body>
 </html>

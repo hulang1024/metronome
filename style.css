@@ -18,6 +18,13 @@
   margin-bottom: 20px;
 }
 
+#beatCountPanel {
+  margin-bottom: 20px;
+}
+#beatCountPanel span {
+  font-style: italic;
+}
+
 #beatSnapPanel {
   margin-bottom: 20px;
 }
@@ -38,12 +45,3 @@
   width: 80px;
 }
 
-.circle {
-  width: 130px;
-  height: 130px;
-  line-height: 130px;
-  border: 1px solid gray;
-  border-radius: 130px;
-  text-align: center;
-  margin: 0 auto;
-}

@@ -1,3 +1,4 @@
+
 window.addEventListener('load', function() {
   var currentTimeElem = document.getElementById('currentTime');
   var audio = document.getElementsByTagName('audio')[0];
@@ -19,12 +20,13 @@ window.addEventListener('load', function() {
   var offset = 0;
   var bpm = 60;
   var memterBeats = 4; // 节拍拍子数
-  //var memterValue = 4; // 拍子时值
   var beatSnapDivisor = 1;
   var timer;
   var isPlaying = false;
 
   parseUrl();
+  
+  var activeManager;
 
   function playOrStop() {
     isPlaying ? stop() : play();
@@ -33,8 +35,9 @@ window.addEventListener('load', function() {
   function play() {
     resetBeats();
     var beatDivs = Array.prototype.slice.call(document.getElementById('beatShowPanel').children, 0);
-    var circle = document.getElementById('memterPanel').children[0];
-
+    var barCountLabel = document.getElementById('barCount');
+    var countCountLabel = document.getElementById('beatCount');
+    
     var beatDuration = 60 * 1000 / bpm;
     var currIndex = 0, prevIndex = 0;
     var beatCount = -1, snapBeatCount;
@@ -42,7 +45,11 @@ window.addEventListener('load', function() {
 
     cancelAnimationFrame(timer);
     startAnimation();
-
+    
+    if (!activeManager) {
+      activeManager = new ActiveManager();
+    }
+    
     function startAnimation() {
       timer = requestAnimationFrame(function() {
         time = audio.currentTime * 1000;
@@ -60,10 +67,8 @@ window.addEventListener('load', function() {
           count = Math.floor((time - offset) / beatDuration);
           if (count != beatCount) {
             beatCount = count;
-            delay = time + 120;
-            circle.style.backgroundColor = 'DodgerBlue';
-          } else if (time >= delay) {
-            circle.style.backgroundColor = '';
+            barCountLabel.innerHTML = (1 + Math.floor(beatCount / memterBeats));
+            countCountLabel.innerHTML = (1 + (beatCount % memterBeats));
           }
         }
 
@@ -143,7 +148,7 @@ window.addEventListener('load', function() {
     var memterSelect = document.getElementById('memterSelect');
 
     for (var beats = 1; beats <= 8; beats++) {
-      var memter = beats + '/' + 4;
+      var memter = beats;
       var opt = new Option();
       opt.text = memter;
       opt.value = beats;
@@ -215,3 +220,59 @@ window.addEventListener('load', function() {
   }
 
 });
+
+function ActiveManager() {
+  var me = this;
+  var timer = null;
+  var isSleeping = true;
+  var lastActiveTime = 0;
+  var intervalTime = 3000;
+  
+  var panels = Array.prototype.slice.call(
+    document.querySelectorAll('#beatSnapPanel, #memterPanel, #timingPanel, #playerPanel'), 0);
+    
+  var showPanels = Array.prototype.slice.call(
+    document.querySelectorAll('#beatShowPanel, #beatCountPanel'), 0);
+    
+  /* 1.在指定间隔时间内没有活动操作就表现‘睡眠’.
+     2.活动操作时醒来  */
+  
+  document.addEventListener('mousemove', function(){
+    lastActiveTime = +new Date;
+    wakeup();
+  });
+  
+  timer = setInterval(function(){
+    if ((+new Date - lastActiveTime) > intervalTime) {
+      sleep();
+    }
+  }, intervalTime);
+  
+  function wakeup() {
+    if (!isSleeping)
+      return;
+    isSleeping = false;
+    
+    $(showPanels).animate(
+      {top: 0},
+      'fast',
+      function() {
+        panels.forEach(function(panel) {
+          panel.style.display = 'block';
+        });
+      });
+  }
+  
+  function sleep() {
+    if (isSleeping)
+      return;
+    isSleeping = true;
+    
+    panels.forEach(function(panel) {
+      panel.style.display = 'none';
+    });
+    $(showPanels).animate({
+      top: 100,
+    }, 'slow');
+  }
+}
