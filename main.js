@@ -26,7 +26,7 @@ window.addEventListener('load', function() {
 
   parseUrl();
   
-  var activeManager;
+  var activeManager = new ActiveManager();
 
   function playOrStop() {
     isPlaying ? stop() : play();
@@ -46,9 +46,7 @@ window.addEventListener('load', function() {
     cancelAnimationFrame(timer);
     startAnimation();
     
-    if (!activeManager) {
-      activeManager = new ActiveManager();
-    }
+    activeManager.start();
     
     function startAnimation() {
       timer = requestAnimationFrame(function() {
@@ -83,6 +81,7 @@ window.addEventListener('load', function() {
 
   function stop() {
     cancelAnimationFrame(timer);
+    activeManager.pause();
     isPlaying = false;
   }
 
@@ -221,32 +220,42 @@ window.addEventListener('load', function() {
 
 });
 
+/* 1.在指定间隔时间内没有活动操作就表现‘睡眠’.
+   2.活动操作时醒来  */
 function ActiveManager() {
   var me = this;
   var timer = null;
   var isSleeping = true;
   var lastActiveTime = 0;
-  var intervalTime = 3000;
+  var lastMousePageX = 0;
+  var intervalTime = 2000;
   
   var panels = Array.prototype.slice.call(
     document.querySelectorAll('#beatSnapPanel, #memterPanel, #timingPanel, #playerPanel'), 0);
-    
   var showPanels = Array.prototype.slice.call(
     document.querySelectorAll('#beatShowPanel, #beatCountPanel'), 0);
     
-  /* 1.在指定间隔时间内没有活动操作就表现‘睡眠’.
-     2.活动操作时醒来  */
-  
-  document.addEventListener('mousemove', function(){
-    lastActiveTime = +new Date;
-    wakeup();
+  document.addEventListener('mousemove', function(event) {
+    if (new Date().getTime(), Math.abs(lastMousePageX - event.pageX) > 10) {
+      lastActiveTime = +new Date;
+      lastMousePageX = event.pageX;
+      wakeup();
+    }
   });
   
-  timer = setInterval(function(){
-    if ((+new Date - lastActiveTime) > intervalTime) {
-      sleep();
-    }
-  }, intervalTime);
+  this.start = function() {
+    if (timer) return;
+    timer = setInterval(function(){
+      if ((+new Date - lastActiveTime) > intervalTime) {
+        sleep();
+      }
+    }, intervalTime);
+  }
+  
+  this.pause = function() {
+    clearInterval(timer);
+    timer = null;
+  }
   
   function wakeup() {
     if (!isSleeping)
@@ -275,4 +284,5 @@ function ActiveManager() {
       top: 100,
     }, 'slow');
   }
+  
 }
