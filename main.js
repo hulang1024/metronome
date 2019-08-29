@@ -107,6 +107,7 @@ window.addEventListener('load', function() {
 
   document.getElementById('playbackRateRange').onchange = function(){
     audio.playbackRate = this.value / 100;
+    console.log(this.value / 100)
     document.getElementById('playbackRateText').innerHTML = (this.value + '%');
   };
 
