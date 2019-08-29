@@ -185,7 +185,7 @@ window.addEventListener('load', function() {
       div.style.border = '1px solid SkyBlue';
       div.style.borderRadius = circleSize + 'px';
       div.style.backgroundColor = 'SkyBlue';
-      div.style.boxShadow = '0 2px 12px 0 rgba(0, 0, 0, 0.2)';
+      div.style.boxShadow = 'rgba(0, 20, 40, 0.1) 0px 0px 8px 4px';
       beatShowPanel.appendChild(div);
     }
   }
