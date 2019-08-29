@@ -176,7 +176,7 @@ window.addEventListener('load', function() {
     var centerTop = (beatShowPanel.scrollHeight - circleSize) / 2;
 
     for (var n = 0; n < beats; n++) {
-      var div = document.createElement('beatShowPanel');
+      var div = document.createElement('div');
       div.style.position = 'absolute';
       div.style.left = centerLeft + (n * (circleSize + gap)) + 'px';
       div.style.top = centerTop + 'px';
@@ -185,6 +185,7 @@ window.addEventListener('load', function() {
       div.style.border = '1px solid SkyBlue';
       div.style.borderRadius = circleSize + 'px';
       div.style.backgroundColor = 'SkyBlue';
+      div.style.boxShadow = '0 2px 12px 0 rgba(0, 0, 0, 0.2)';
       beatShowPanel.appendChild(div);
     }
   }

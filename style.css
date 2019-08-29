@@ -1,5 +1,9 @@
 * { margin: 0; }
 
+body {
+  color: #606266;
+}
+
 .panel {
   position: relative;
   width: 800px;
